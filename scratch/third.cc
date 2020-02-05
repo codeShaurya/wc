@@ -39,11 +39,9 @@
 //                                     LAN 10.1.2.0
 
 using namespace ns3;
+NS_LOG_COMPONENT_DEFINE("third");
 
-NS_LOG_COMPONENT_DEFINE ("third");
-
-int 
-main (int argc, char *argv[])
+int main (int argc, char *argv[])
 {
   bool verbose = true;
   uint32_t nCsma = 3;
@@ -167,7 +165,7 @@ main (int argc, char *argv[])
   echoClient.SetAttribute ("Interval", TimeValue (Seconds (1.0)));
   echoClient.SetAttribute ("PacketSize", UintegerValue (2048));
 
-  ApplicationContainer clientApps = 
+  ApplicationContainer clientApps =
     echoClient.Install (wifiStaNodes.Get (nWifi - 1));
   clientApps.Start (Seconds (2.0));
   clientApps.Stop (Seconds (10.0));
