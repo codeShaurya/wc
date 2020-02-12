@@ -25,10 +25,6 @@ Config::SetDefault ("ns3::RangePropagationLossModel::MaxRange", DoubleValue (10)
 NodeContainer nodes;
 nodes.Create (3);
 MobilityHelper mobility;
-// ObjectFactory pos;
-// pos.SetTypeId ("ns3::RandomRectanglePositionAllocator");
-// pos.Set ("X", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=500.0]"));
-// pos.Set ("Y", StringValue ("ns3::UniformRandomVariable[Min=0.0|Max=500.0]"));
 NodeContainer staticNodes;
 NodeContainer mobileNodes;
 staticNodes.Add(nodes.Get(0));
@@ -47,11 +43,8 @@ Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> (
   mobility.SetPositionAllocator (positionAlloc);
 
   mobility.Install (staticNodes);
-for (NodeContainer::Iterator i = mobileNodes.Begin(); i != mobileNodes.End(); i++)
-    {
-      Ptr<ConstantVelocityMobilityModel> model = (*i)->GetObject<ConstantVelocityMobilityModel>();
-      model->SetVelocity(Vector(0,-1.0,0));
-    }
+  Ptr<ConstantVelocityMobilityModel> model = (mobileNodes.Get(0))->GetObject<ConstantVelocityMobilityModel>();
+  model->SetVelocity(Vector(0,-1.0,0));
 // setting up wifi phy and channel using helpers
 WifiHelper wifi;
 wifi.SetStandard (WIFI_PHY_STANDARD_80211b);
@@ -59,14 +52,15 @@ YansWifiPhyHelper wifiPhy = YansWifiPhyHelper::Default ();
 YansWifiChannelHelper wifiChannel;
 wifiChannel.SetPropagationDelay ("ns3::ConstantSpeedPropagationDelayModel");
 wifiChannel.AddPropagationLoss ("ns3::RangePropagationLossModel");
+// wifiChannel.AddPropagationLoss ("ns3::FriisPropagationLossModel");
 wifiPhy.SetChannel (wifiChannel.Create ());
 // Add a mac
 WifiMacHelper wifiMac;
 wifi.SetRemoteStationManager ("ns3::ConstantRateWifiManager",
 "DataMode",StringValue ("DsssRate2Mbps"),
 "ControlMode",StringValue ("DsssRate2Mbps"));
-// wifiPhy.Set ("TxPowerStart",DoubleValue (7.5));
-// wifiPhy.Set ("TxPowerEnd", DoubleValue (7.5));
+// wifiPhy.Set ("TxPowerStart",DoubleValue (0.01));
+// wifiPhy.Set ("TxPowerEnd", DoubleValue (0.01));
 wifiMac.SetType ("ns3::AdhocWifiMac");
 NetDeviceContainer devices = wifi.Install (wifiPhy, wifiMac, nodes);
 AodvHelper aodv;
