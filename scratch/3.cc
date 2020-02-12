@@ -35,7 +35,6 @@ staticNodes.Add(nodes.Get(0));
 staticNodes.Add(nodes.Get(1));
 mobileNodes.Add(nodes.Get(1));
 staticNodes.Add(nodes.Get(2));
-Time m_positionUpdateInterval = Seconds(0.3); // the length of period to update node's position
 
 Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> ();
   positionAlloc->Add (Vector (0.0, 10.0, 0.0));
@@ -50,46 +49,9 @@ Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator> (
   mobility.Install (staticNodes);
 for (NodeContainer::Iterator i = mobileNodes.Begin(); i != mobileNodes.End(); i++)
     {
-      Ptr<UniformRandomVariable> rand = CreateObject<UniformRandomVariable> ();
       Ptr<ConstantVelocityMobilityModel> model = (*i)->GetObject<ConstantVelocityMobilityModel>();
       model->SetVelocity(Vector(0,-1.0,0));
-
-      ConstantVelocityHelper m_helper = ConstantVelocityHelper(model->GetPosition(), model->GetVelocity());
-      // for (Time update = m_positionUpdateInterval; update < m_simStop-Seconds(1); update += m_positionUpdateInterval)
-      // {
-      //   Simulator::Schedule(update, &ASGoalString::UpdatePosition, &goal, m_helper);
-      // }
     }
-// NodeContainer mobileNodes;
-// MobilityHelper mobilityMobile;
-
-// mobileNodes.Add(nodes.Get(1));
-// Ptr<ListPositionAllocator> positionAllocMobile = CreateObject<ListPositionAllocator> ();
-//   positionAllocMobile->Add (Vector (7.0, 20.0, 0.0));
-
-//    mobilityMobile.SetMobilityModel ("ns3::ConstantVelocityMobilityModel");
-//   mobilityMobile.SetPositionAllocator (positionAllocMobile);
-
-
-
-
-
-//   mobilityMobile.Install (mobileNodes);
-
-// for (uint8_t i = 0; i < 2; ++i)
-//     {
-//     }
-    // Ptr<PositionAllocator> positionAlloc = pos.Create ()->GetObject<PositionAllocator> ();
-      // nodes.Get (0)->AggregateObject (CreateObject<ConstantPositionMobilityModel> ());
-      // nodes.Get (2)->AggregateObject (CreateObject<ConstantPositionMobilityModel> ());
-
-
-// mobility.SetMobilityModel ("ns3::RandomWaypointMobilityModel",
-// "PositionAllocator", PointerValue (positionAlloc));
-// mobility.SetPositionAllocator (positionAlloc);
-/*mobility.SetMobilityModel ("ns3::RandomWalk2dMobilityModel",
-"Bounds", RectangleValue (Rectangle (-500, 500, -500, 500)));*/
-// mobility.Install (nodes);
 // setting up wifi phy and channel using helpers
 WifiHelper wifi;
 wifi.SetStandard (WIFI_PHY_STANDARD_80211b);
@@ -140,9 +102,6 @@ Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
 Simulator::Stop (Seconds (TotalTime));
 AnimationInterface anim("aodv.xml");
 
-// anim.SetConstantPosition(nodes.Get(0),0.0,0.0);
-// anim.SetConstantPosition(nodes.Get(1),7.0,0.0);
-// anim.SetConstantPosition(nodes.Get(2),15.0,0.0);
 
 Simulator::Run ();
 monitor->CheckForLostPackets ();
