@@ -24,6 +24,7 @@ void experiment (bool enableCtsRts, string wifiManager)
   // 0. Enable or disable CTS/RTS
   UintegerValue ctsThr = (enableCtsRts ? UintegerValue (100) : UintegerValue (2200));
   Config::SetDefault ("ns3::WifiRemoteStationManager::RtsCtsThreshold", ctsThr);
+Config::SetDefault ("ns3::RangePropagationLossModel::MaxRange", DoubleValue (30));
 
   // 1. Create 3 nodes
   NodeContainer nodes;
@@ -46,8 +47,10 @@ void experiment (bool enableCtsRts, string wifiManager)
   mobility1.Install(nodes);
 
   // 3. Create propagation loss matrix
-  Ptr<MatrixPropagationLossModel> lossModel = CreateObject<MatrixPropagationLossModel> ();
-  lossModel->SetDefaultLoss (0); // set default loss to 200 dB (no link)
+  // Ptr<MatrixPropagationLossModel> lossModel = CreateObject<MatrixPropagationLossModel> ();
+  // lossModel->SetDefaultLoss (0); // set default loss to 200 dB (no link)
+  Ptr<RangePropagationLossModel> lossModel = CreateObject<RangePropagationLossModel> ();
+
   // lossModel->SetLoss (nodes.Get (1)->GetObject<MobilityModel> (), nodes.Get (0)->GetObject<MobilityModel> (), 50); // set symmetric loss 0 <-> 1 to 50 dB
   // lossModel->SetLoss (nodes.Get (2)->GetObject<MobilityModel> (), nodes.Get (1)->GetObject<MobilityModel> (), 50); // set symmetric loss 0 <-> 1 to 50 dB
   // lossModel->SetLoss (nodes.Get (2)->GetObject<MobilityModel> (), nodes.Get (3)->GetObject<MobilityModel> (), 50); // set symmetric loss 2 <-> 1 to 50 dB
@@ -55,6 +58,8 @@ void experiment (bool enableCtsRts, string wifiManager)
   // 4. Create & setup wifi channel
   Ptr<YansWifiChannel> wifiChannel = CreateObject <YansWifiChannel> ();
   wifiChannel->SetPropagationLossModel (lossModel);
+// wifiChannel.AddPropagationLoss ("ns3::FriisPropagationLossModel");
+
   wifiChannel->SetPropagationDelayModel (CreateObject <ConstantSpeedPropagationDelayModel> ());
 
   // 5. Install wireless devices
@@ -63,6 +68,8 @@ void experiment (bool enableCtsRts, string wifiManager)
   wifi.SetRemoteStationManager ("ns3::" + wifiManager + "WifiManager");
   YansWifiPhyHelper wifiPhy =  YansWifiPhyHelper::Default ();
   wifiPhy.SetChannel (wifiChannel);
+  // wifiPhy.Set ("TxPowerStart",DoubleValue (7.5));
+  // wifiPhy.Set ("TxPowerEnd", DoubleValue (7.5));
   WifiMacHelper wifiMac;
   wifiMac.SetType ("ns3::AdhocWifiMac"); // use ad-hoc MAC
   NetDeviceContainer devices = wifi.Install (wifiPhy, wifiMac, nodes);
