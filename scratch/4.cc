@@ -39,9 +39,9 @@ void experiment (bool enableCtsRts, string wifiManager)
   mobility1.SetPositionAllocator ("ns3::GridPositionAllocator",
                                  "MinX", DoubleValue (0.0),
                                  "MinY", DoubleValue (0.0),
-                                 "DeltaX", DoubleValue (5.0),
-                                 "DeltaY", DoubleValue (10.0),
-                                 "GridWidth", UintegerValue (3),
+                                 "DeltaX", DoubleValue (20.0),
+                                 "DeltaY", DoubleValue (20.0),
+                                 "GridWidth", UintegerValue (5),
                                  "LayoutType", StringValue ("RowFirst"));
   mobility1.Install(nodes);
 
@@ -81,35 +81,35 @@ void experiment (bool enableCtsRts, string wifiManager)
   // 7. Install applications: two CBR streams each saturating the channel
   ApplicationContainer cbrApps;
   uint16_t cbrPort = 12345;
-  OnOffHelper onOffHelper1 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.1"), cbrPort));
-  onOffHelper1.SetAttribute ("PacketSize", UintegerValue (1000));
+  OnOffHelper onOffHelper1 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.25"), cbrPort));
+  onOffHelper1.SetAttribute ("PacketSize", UintegerValue (110));
   onOffHelper1.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   onOffHelper1.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
   // flow 1:  node 1 -> node 0
   onOffHelper1.SetAttribute ("DataRate", StringValue ("3000000bps"));
   onOffHelper1.SetAttribute ("StartTime", TimeValue (Seconds (1.000000)));
-  cbrApps.Add (onOffHelper1.Install (nodes.Get (1)));
+  cbrApps.Add (onOffHelper1.Install (nodes.Get (0)));
 
   // flow 2:  node 2 -> node 1
-  OnOffHelper onOffHelper2 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.2"), cbrPort));
-  onOffHelper2.SetAttribute ("PacketSize", UintegerValue (1000));
+  OnOffHelper onOffHelper2 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.5"), cbrPort));
+  onOffHelper2.SetAttribute ("PacketSize", UintegerValue (110));
   onOffHelper2.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
   onOffHelper2.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
   onOffHelper2.SetAttribute ("DataRate", StringValue ("3000000bps"));
-  onOffHelper2.SetAttribute ("StartTime", TimeValue (Seconds (1.000001)));
-  cbrApps.Add (onOffHelper2.Install (nodes.Get (2)));
+  onOffHelper2.SetAttribute ("StartTime", TimeValue (Seconds (2.000000)));
+  cbrApps.Add (onOffHelper2.Install (nodes.Get (19)));
 
   // flow 3:  node 2 -> node 3
-  OnOffHelper onOffHelper3 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.4"), cbrPort));
-  onOffHelper3.SetAttribute ("PacketSize", UintegerValue (1000));
-  onOffHelper3.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  onOffHelper3.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  // OnOffHelper onOffHelper3 ("ns3::UdpSocketFactory", InetSocketAddress (Ipv4Address ("10.0.0.4"), cbrPort));
+  // onOffHelper3.SetAttribute ("PacketSize", UintegerValue (1000));
+  // onOffHelper3.SetAttribute ("OnTime",  StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+  // onOffHelper3.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
 
-  onOffHelper3.SetAttribute ("DataRate", StringValue ("3000000bps"));
-  onOffHelper3.SetAttribute ("StartTime", TimeValue (Seconds (1.000002)));
-  cbrApps.Add (onOffHelper3.Install (nodes.Get (2)));
+  // onOffHelper3.SetAttribute ("DataRate", StringValue ("3000000bps"));
+  // onOffHelper3.SetAttribute ("StartTime", TimeValue (Seconds (1.000002)));
+  // cbrApps.Add (onOffHelper3.Install (nodes.Get (2)));
 
 
   uint16_t  echoPort = 9;
@@ -145,13 +145,13 @@ void experiment (bool enableCtsRts, string wifiManager)
   Ptr<FlowMonitor> monitor = flowmon.InstallAll ();
 
   // 9. Run simulation for 10 seconds
-  Simulator::Stop (Seconds (3));
+  Simulator::Stop (Seconds (10));
 AnimationInterface anim("exposed.xml");
 
-anim.SetConstantPosition(nodes.Get(0),0.0,0.0);
-anim.SetConstantPosition(nodes.Get(1),10.0,0.0);
-anim.SetConstantPosition(nodes.Get(2),20.0,0.0);
-anim.SetConstantPosition(nodes.Get(3),30.0,0.0);
+// anim.SetConstantPosition(nodes.Get(0),0.0,0.0);
+// anim.SetConstantPosition(nodes.Get(1),10.0,0.0);
+// anim.SetConstantPosition(nodes.Get(2),20.0,0.0);
+// anim.SetConstantPosition(nodes.Get(3),30.0,0.0);
   Simulator::Run ();
 
   // 10. Print per flow statistics
